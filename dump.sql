@@ -1,184 +1,154 @@
-CREATE DATABASE  IF NOT EXISTS `gestionhotel` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `gestionhotel`;
--- MySQL dump 10.13  Distrib 8.0.16, for Win64 (x86_64)
---
--- Host: 127.0.0.1    Database: gestionhotel
--- ------------------------------------------------------
--- Server version	8.0.31
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
- SET NAMES utf8 ;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Table structure for table `categorie`
---
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
-DROP TABLE IF EXISTS `categorie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `categorie` (
-  `idcategorie` int NOT NULL,
-  `nom_categorie` enum('economique','standing','affaires') NOT NULL,
-  `tarif_unitaire` decimal(10,0) NOT NULL,
-  PRIMARY KEY (`idcategorie`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema gestionhotel
+-- -----------------------------------------------------
 
---
--- Dumping data for table `categorie`
---
+-- -----------------------------------------------------
+-- Schema gestionhotel
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `gestionhotel` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `gestionhotel` ;
 
-LOCK TABLES `categorie` WRITE;
-/*!40000 ALTER TABLE `categorie` DISABLE KEYS */;
-/*!40000 ALTER TABLE `categorie` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`categorie`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`categorie` (
+  `Idcategorie` INT NOT NULL AUTO_INCREMENT,
+  `Nom_categorie` ENUM('economique', 'standing', 'affaires') NOT NULL,
+  `Tarif_unitaire` DECIMAL(10,0) NOT NULL,
+  PRIMARY KEY (`Idcategorie`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
---
--- Table structure for table `chambre`
---
 
-DROP TABLE IF EXISTS `chambre`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `chambre` (
-  `num_chambre` int NOT NULL,
-  `id_etage` int DEFAULT NULL,
-  `idcategorie` int DEFAULT NULL,
-  PRIMARY KEY (`num_chambre`),
-  KEY `idcategorie_idx` (`idcategorie`),
-  KEY `id_etage_idx` (`id_etage`,`idcategorie`),
-  CONSTRAINT `id_etage` FOREIGN KEY (`id_etage`) REFERENCES `etage` (`id_etage`),
-  CONSTRAINT `idcategorie` FOREIGN KEY (`idcategorie`) REFERENCES `categorie` (`idcategorie`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`etage`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`etage` (
+  `Id_etage` INT NOT NULL,
+  PRIMARY KEY (`Id_etage`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `chambre`
---
 
-LOCK TABLES `chambre` WRITE;
-/*!40000 ALTER TABLE `chambre` DISABLE KEYS */;
-/*!40000 ALTER TABLE `chambre` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`hotel`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`hotel` (
+  `Nom_hotel` VARCHAR(45) NOT NULL,
+  `NbEtages` INT NOT NULL,
+  `NbChambresParEtage` INT NOT NULL,
+  PRIMARY KEY (`Nom_hotel`))
+ENGINE = InnoDB;
 
---
--- Table structure for table `client`
---
 
-DROP TABLE IF EXISTS `client`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `client` (
-  `id_client` int NOT NULL,
-  `nom_client` varchar(45) NOT NULL,
-  `prenom_client` varchar(45) NOT NULL,
-  `adresse_client` varchar(45) DEFAULT NULL,
-  `telephone_client` int DEFAULT NULL,
-  PRIMARY KEY (`id_client`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`chambre`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`chambre` (
+  `Num_chambre` INT NOT NULL AUTO_INCREMENT,
+  `Id_etage` INT NOT NULL,
+  `Idcategorie` INT NOT NULL,
+  `Statut` ENUM('occupe', 'libre') NOT NULL,
+  `Nom_hotel` VARCHAR(45) NULL,
+  PRIMARY KEY (`Num_chambre`),
+  INDEX `idcategorie_idx` (`Idcategorie` ASC) VISIBLE,
+  INDEX `id_etage_idx` (`Id_etage` ASC, `Idcategorie` ASC) VISIBLE,
+  INDEX `nom_hotel_idx` (`Nom_hotel` ASC) VISIBLE,
+  CONSTRAINT `id_etage`
+    FOREIGN KEY (`Id_etage`)
+    REFERENCES `gestionhotel`.`etage` (`Id_etage`),
+  CONSTRAINT `idcategorie`
+    FOREIGN KEY (`Idcategorie`)
+    REFERENCES `gestionhotel`.`categorie` (`Idcategorie`)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL,
+  CONSTRAINT `nom_hotel`
+    FOREIGN KEY (`Nom_hotel`)
+    REFERENCES `gestionhotel`.`hotel` (`Nom_hotel`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `client`
---
 
-LOCK TABLES `client` WRITE;
-/*!40000 ALTER TABLE `client` DISABLE KEYS */;
-/*!40000 ALTER TABLE `client` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`client`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`client` (
+  `Id_client` INT NOT NULL AUTO_INCREMENT,
+  `Nom_client` VARCHAR(45) NOT NULL,
+  `Prenom_client` VARCHAR(45) NOT NULL,
+  `Adresse_client` VARCHAR(45) NULL DEFAULT NULL,
+  `Telephone_client` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`Id_client`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
---
--- Table structure for table `etage`
---
 
-DROP TABLE IF EXISTS `etage`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `etage` (
-  `id_etage` int NOT NULL,
-  PRIMARY KEY (`id_etage`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`reservation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`reservation` (
+  `Id_reservation` INT NOT NULL AUTO_INCREMENT,
+  `Date_arrivee` DATE NOT NULL,
+  `Date_depart` DATE NOT NULL,
+  `Type_tarif` ENUM('normal', 'groupe') NOT NULL,
+  `Id_client` INT NULL DEFAULT NULL,
+  `Num_chambre` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`Id_reservation`),
+  INDEX `id_client_idx` (`Id_client` ASC) VISIBLE,
+  INDEX `num_chambre_idx` (`Num_chambre` ASC) VISIBLE,
+  CONSTRAINT `id_client`
+    FOREIGN KEY (`Id_client`)
+    REFERENCES `gestionhotel`.`client` (`Id_client`),
+  CONSTRAINT `num_chambre`
+    FOREIGN KEY (`Num_chambre`)
+    REFERENCES `gestionhotel`.`chambre` (`Num_chambre`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `etage`
---
 
-LOCK TABLES `etage` WRITE;
-/*!40000 ALTER TABLE `etage` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etage` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Table `gestionhotel`.`service`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gestionhotel`.`service` (
+  `Id_service` INT NOT NULL AUTO_INCREMENT,
+  `Nom_service` ENUM('ptit dejeuner', 'bar', 'telephone') NOT NULL,
+  `Tarif_unitaire` DECIMAL(10,0) NOT NULL,
+  `Id_reservation` INT NULL,
+  `Nom_hotel` VARCHAR(45) NULL,
+  PRIMARY KEY (`Id_service`),
+  INDEX `id_reservation_idx` (`Id_reservation` ASC) VISIBLE,
+  INDEX `nom_hotel_idx` (`Nom_hotel` ASC) VISIBLE,
+  CONSTRAINT `id_reservation`
+    FOREIGN KEY (`Id_reservation`)
+    REFERENCES `gestionhotel`.`reservation` (`Id_reservation`)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL,
+  CONSTRAINT `nom_hotel`
+    FOREIGN KEY (`Nom_hotel`)
+    REFERENCES `gestionhotel`.`hotel` (`Nom_hotel`)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
---
--- Table structure for table `reservation`
---
 
-DROP TABLE IF EXISTS `reservation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `reservation` (
-  `id_reservation` int NOT NULL,
-  `date_arrivee` date DEFAULT NULL,
-  `date_depart` date DEFAULT NULL,
-  `type_tarif` enum('normal','groupe') DEFAULT NULL,
-  `id_client` int DEFAULT NULL,
-  `num_chambre` int DEFAULT NULL,
-  PRIMARY KEY (`id_reservation`),
-  KEY `id_client_idx` (`id_client`),
-  KEY `num_chambre_idx` (`num_chambre`),
-  CONSTRAINT `id_client` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`),
-  CONSTRAINT `num_chambre` FOREIGN KEY (`num_chambre`) REFERENCES `chambre` (`num_chambre`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `reservation`
---
-
-LOCK TABLES `reservation` WRITE;
-/*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `service`
---
-
-DROP TABLE IF EXISTS `service`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `service` (
-  `id_service` int NOT NULL,
-  `nom_service` enum('ptit dejeuner','bar','telephone') NOT NULL,
-  `tarif_unitaire` decimal(10,0) NOT NULL,
-  PRIMARY KEY (`id_service`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `service`
---
-
-LOCK TABLES `service` WRITE;
-/*!40000 ALTER TABLE `service` DISABLE KEYS */;
-/*!40000 ALTER TABLE `service` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2023-03-13 23:23:39
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
